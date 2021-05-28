@@ -1,36 +1,45 @@
-const { Schema, model } = require(`mongoose`);
+const { Schema, model } = require('mongoose');
 
-const userSchema = new Schema({
+const UserSchema = new Schema({
     username: {
         type: String,
         unique: true,
-        required: true,
-        trimmed: false
+        required: [true,'You must enter a username'],
+        trim: false
     },
     email: {
         type: String,
-        required: true,
+        required: [true, 'You must enter an email'],
         unique: true,
-        validate: {
-            validator: () => Promise.resolve(false),
-      message: `Email validation failed`
-        }
+        match: [/.+@.+\..+/, 'Please enter a valid e-mail address']
     },
-    thoughts: [],
-    friends: []
-});
-const User = db.model(`User`, userSchema);
-const user = new User();
+    thoughts: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Thought'
+        }
+    ],
+    friends: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'friend'
+        }
+    ]
+},
+{
+    toJSON: {
+        virtuals: true,
+    },
+    id: false
+}
+);
 
-// user.email = 'test@test.co';
-// user.name = 'test';
-user.validate().catch(error => {
-  assert.ok(error);
-  assert.equal(error.errors[`name`].message, `Oops!`);
-  assert.equal(error.errors[`email`].message, `Email validation failed`);
+//get total count of comments and replies on retrieval
+UserSchema.virtual('friendCount').get(function() {
+    return this.friends.length;
 });
 
 // create the User model using UserSchema
-const User = model(`User`, UserSchema);
+const User = model('User', UserSchema);
 // export the User model
-model.exports = User;
+module.exports = User;

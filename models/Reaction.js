@@ -1,5 +1,5 @@
 const { ObjectID } = require("bson");
-const { Schema, model } = require(`mongoose`);
+const { Schema, model } = require('mongoose');
 
 const ReactionSchema = new Schema({
     reactionID: {
@@ -22,6 +22,6 @@ const ReactionSchema = new Schema({
 });
 
 // create the Reaction model using ReactionSchema
-const Reaction = model(`Reaction`, ReactionSchema);
-// export the User model
-model.exports = Reaction;
+const Reaction = model('Reaction', ReactionSchema);
+// export the Reaction model
+module.exports = Reaction;
