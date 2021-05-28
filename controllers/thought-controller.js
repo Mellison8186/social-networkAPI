@@ -11,9 +11,25 @@ const thoughtController = {
     });
 },
 
-    //add comment to pizza
+// get one thought by Id
+getThoughtById({ params }, res) {
+    Thought.findOne({ _id: params.id })
+    .then(dbUserData => {
+        // If no thought found send 400
+        if (!dbUserData) {
+            res.status(400).json({ message: `No thought found with this id!`});
+            return;
+        }
+        res.json(dbUserData);
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(400).json(err);
+    });
+},
+
+    //create addthought
     addThought({ params, body }, res) {
-        console.log(body);
         Thought.create(body)
         .then(({ _id }) => {
             return User.findOneAndUpdate(
@@ -24,12 +40,25 @@ const thoughtController = {
         })
         .then(dbUserData => {
             if (!dbUserData) {
-                res.status(404).json({ message: 'No user found with this id!' });
+                res.status(404).json({ message: 'No thought found with this id!' });
                 return;
             }
             res.json(dbUserData);
         })
         .catch(err => res.json(err));
+    },
+
+    // update thought
+    updateThought({ params, body }, res) {
+        Thought.findOneAndUpdate({ _id: params.thoughtId}, body, { new : true })
+        .then(dbUserData => {
+            if (!dbUserData){
+                res.status(404).json({ message: `No thought found with this id!` });
+                return;
+            }
+            res.json(dbUserData);
+        })
+        .catch(err => res.status(400).json(err));
     },
 
     // remove thought
@@ -47,7 +76,7 @@ const thoughtController = {
         })
         .then(dbUserData => {
             if (!dbUserData) {
-                res.status(404).json({ message: 'No user found with this id!' });
+                res.status(404).json({ message: 'No thought found with this id!' });
                 return;
             }
             res.json(dbUserData);
