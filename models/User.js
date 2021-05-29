@@ -5,7 +5,7 @@ const UserSchema = new Schema({
         type: String,
         unique: true,
         required: [true,'You must enter a username'],
-        trim: false
+        trim: true
     },
     email: {
         type: String,
@@ -37,6 +37,10 @@ const UserSchema = new Schema({
 //get total count of comments and replies on retrieval
 UserSchema.virtual('friendCount').get(function() {
     return this.friends.length;
+});
+
+UserSchema.virtual('thoughtCount').get(function() {
+    return this.thoughts.length;
 });
 
 // create the User model using UserSchema

@@ -8,7 +8,7 @@ const ReactionSchema = new Schema({
     },
     reactionId: {
         type: Schema.Types.ObjectId,
-        default: () => Types.ObjectId,
+        default: () => new Types.ObjectId,
     },
     reactionBody: {
         type: String,
@@ -19,6 +19,11 @@ const ReactionSchema = new Schema({
         type: Date,
         default: Date.now,
         get: createdAtVal => dateFormat(createdAtVal)
+    }
+},
+{
+    toJSON: {
+        getters: true
     }
 });
 
@@ -39,6 +44,17 @@ const ThoughtSchema = new Schema({
         get: createdAtVal => dateFormat(createdAtVal)
     },
     reactions: [ReactionSchema]
+},
+{
+    toJSON: {
+        virtuals: true,
+        getters: true
+    },
+    id: false
+});
+
+ThoughtSchema.virtual('reactionCount').get(function() {
+    return this.reactions.length;
 });
 
 // create the Thought model using thoughtSchema
